@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>千葉工大 出席リンク（自動判定版）</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        h1 {
+            font-size: 1.4rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 1.1rem;
+            color: #555;
+            margin-top: 0;
+        }
+        .active-class-box {
+            background-color: #e6f4ea;
+            border: 2px solid #34a853;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .class-btn {
+            background-color: #34a853;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: background-color 0.3s;
+        }
+        .class-btn:hover {
+            background-color: #2b8a44;
+        }
+        .no-class-text {
+            color: #777;
+            font-size: 0.95rem;
+            font-style: italic;
+            margin-bottom: 25px;
+        }
+        hr {
+            border: 0;
+            border-top: 1px solid #ddd;
+            margin: 20px 0;
+        }
+        .manual-section {
+            color: #666;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            outline: none;
+        }
+        .manual-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 85%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="auto-section">
+        <h2>📅 今日の出席対象の授業</h2>
+        <div id="attendance-area"></div>
+    </div>
+
+    <hr>
+
+    <div class="manual-section">
+        <h3>教室番号で直接移動</h3>
+        <input type="text" id="classroom-number" placeholder="講義室番号（例: 1234）">
+        <br>
+        <button class="manual-btn" onclick="redirectToManual()">移動する</button>
+    </div>
+</div>
+
+<script>
+    const myTimetable = [
+        { day: 1, name: "情報メディア基礎 高度2年", room: "5103", start: "10:00", end: "12:00" },
+        { day: 1, name: "NWプログラミング基礎演習 高度2年", room: "3212", start: "13:00", end: "17:00" },
+        { day: 1, name: "幾何学1", room: "5107", start: "17:00", end: "19:00" },
+        { day: 2, name: "TCP/IP概論 高度2年", room: "8102", start: "09:00", end: "11:00" },
+        { day: 2, name: "英語理解3eクラス", room: "5106", start: "11:00", end: "13:00" },
+        { day: 2, name: "微分方程式 高度2年_偶数", room: "8206", start: "14:00", end: "16:00" },
+        { day: 2, name: "離散数学 高度2年", room: "8206", start: "16:00", end: "18:00" },
+        { day: 3, name: "データ構造とアルゴリズム 高度2年", room: "3212", start: "10:00", end: "12:00" },
+        { day: 3, name: "確率統計 高度2年_偶数", room: "8109", start: "13:00", end: "15:00" },
+        { day: 3, name: "数理モデリング 高度2年", room: "8201", start: "15:00", end: "17:00" },
+        { day: 3, name: "解析学1", room: "5107", start: "17:00", end: "19:00" },
+        { day: 4, name: "情報数学1 高度2年", room: "7202", start: "11:00", end: "13:00" },
+        { day: 5, name: "キャリアデザイン2 高度", room: "1122", start: "10:00", end: "12:00" },
+        { day: 5, name: "英語表現3eクラス", room: "5105", start: "13:00", end: "15:00" },
+        { day: 5, name: "心理学", room: "5201", start: "16:00", end: "18:00" },
+        { day: 6, name: "数学科教育法1", room: "612", start: "11:00", end: "13:00" },
+        { day: 6, name: "教育課程論", room: "614", start: "14:00", end: "16:00" }
+    ];
+
+    const baseUrl = "https://attendance.is.it-chiba.ac.jp/attendance/class_room/";
+
+    window.onload = function() {
+        checkCurrentClass();
+    };
+
+    function checkCurrentClass() {
+        const now = new Date();
+        const currentDay = now.getDay();
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+        const area = document.getElementById('attendance-area');
+        area.innerHTML = "";
+
+        let foundClass = false;
+
+        myTimetable.forEach(course => {
+            if (course.day === currentDay) {
+                const [startH, startM] = course.start.split(':').map(Number);
+                const [endH, endM] = course.end.split(':').map(Number);
+                
+                const startMinutes = startH * 60 + startM;
+                const endMinutes = endH * 60 + endM;
+
+                if (currentMinutes >= (startMinutes - 30) && currentMinutes <= endMinutes) {
+                    foundClass = true;
+                    
+                    const box = document.createElement('div');
+                    box.className = 'active-class-box';
+                    box.innerHTML = `
+                        <p><strong>${course.name}</strong><br>📍 講義室: ${course.room}</p>
+                        <button class="class-btn" onclick="location.href='${baseUrl + course.room}'">
+                            出席登録画面を開く
+                        </button>
+                    `;
+                    area.appendChild(box);
+                }
+            }
+        });
+
+        if (!foundClass) {
+            area.innerHTML = `<p class="no-class-text">現在、出席受付時間内の授業はありません。</p>`;
+        }
+    }
+
+    function redirectToManual() {
+        const roomNumber = document.getElementById('classroom-number').value.trim();
+        if (roomNumber === "") {
+            alert("講義室番号を入力してください。");
+            return;
+        }
+        window.location.href = baseUrl + roomNumber;
+    }
+
+    document.getElementById('classroom-number').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            redirectToManual();
+        }
+    });
+</script>
+
+</body>
+</html>
