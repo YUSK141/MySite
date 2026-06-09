@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>千葉工大 出席リンク（自動判定版）</title>
+    <title>千葉工大 出席リンク（時計・自動判定版）</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -33,6 +33,27 @@
             color: #555;
             margin-top: 0;
         }
+
+        /* 🕰️ 時計セクションのスタイル */
+        .clock-box {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-family: 'Courier New', Courier, monospace; /* デジタル時計っぽいフォント */
+        }
+        .clock-date {
+            font-size: 0.9rem;
+            letter-spacing: 0.1rem;
+            margin-bottom: 5px;
+        }
+        .clock-time {
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 0.15rem;
+        }
+
         .active-class-box {
             background-color: #e6f4ea;
             border: 2px solid #34a853;
@@ -95,6 +116,12 @@
 <body>
 
 <div class="container">
+    
+    <div class="clock-box">
+        <div class="clock-date" id="clock-date"></div>
+        <div class="clock-time" id="clock-time"></div>
+    </div>
+
     <div id="auto-section">
         <h2>📅 今日の出席対象の授業</h2>
         <div id="attendance-area"></div>
@@ -132,11 +159,40 @@
     ];
 
     const baseUrl = "https://attendance.is.it-chiba.ac.jp/attendance/class_room/";
+    const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
 
+    // 画面が開いたときに自動実行
     window.onload = function() {
-        checkCurrentClass();
+        startClock();        // 時計をスタート
+        checkCurrentClass(); // 授業判定（最初の一回）
+        
+        // 1分ごとに授業判定を再実行してボタンを更新する
+        setInterval(checkCurrentClass, 60000); 
     };
 
+    // 🕰️ 時計をリアルタイムに更新する関数
+    function startClock() {
+        function updateClock() {
+            const now = new Date();
+            
+            // 年、月、日、曜日を組み立て
+            const dateStr = `${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()} (${weekdays[now.getDay()]})`;
+            
+            // 時、分、秒を2桁になるように組み立て
+            const timeStr = [now.getHours(), now.getMinutes(), now.getSeconds()]
+                .map(unit => String(unit).padStart(2, '0'))
+                .join(':');
+
+            document.getElementById('clock-date').innerText = dateStr;
+            document.getElementById('clock-time').innerText = timeStr;
+        }
+
+        // 1秒ごとにupdateClockを呼び出す
+        updateClock(); // 最初の表示
+        setInterval(updateClock, 1000);
+    }
+
+    // 授業判定の関数（前回のままですが、自動更新するようにonloadを変更）
     function checkCurrentClass() {
         const now = new Date();
         const currentDay = now.getDay();
