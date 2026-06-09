@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>千葉工大 出席リンク（時計・自動判定版）</title>
+    <title>千葉工大 出席リンク（タイマー・自動判定版）</title>
     <style>
         body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f4f7f6;
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            background-color: #f0f4f8;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -17,99 +17,129 @@
         .container {
             background-color: #ffffff;
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 16px; /* 少し丸みを強くして可愛く */
+            box-shadow: 0 8px 24px rgba(149, 157, 165, 0.2);
             text-align: center;
             width: 90%;
             max-width: 400px;
         }
-        h1 {
-            font-size: 1.4rem;
-            color: #333;
-            margin-bottom: 20px;
-        }
         h2 {
             font-size: 1.1rem;
-            color: #555;
+            color: #5a6a85;
             margin-top: 0;
+            font-weight: bold;
         }
 
         /* 🕰️ 時計セクションのスタイル */
         .clock-box {
-            background-color: #333;
+            background-color: #2d3748;
             color: #fff;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-family: 'Courier New', Courier, monospace; /* デジタル時計っぽいフォント */
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            font-family: 'Courier New', Courier, monospace;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
         }
         .clock-date {
             font-size: 0.9rem;
             letter-spacing: 0.1rem;
             margin-bottom: 5px;
+            color: #cbd5e0;
         }
         .clock-time {
-            font-size: 1.8rem;
+            font-size: 1.9rem;
             font-weight: bold;
             letter-spacing: 0.15rem;
+            color: #63b3ed; /* 少し爽やかな青色に */
         }
 
+        /* 🟢 出席ボタンがあるときのボックス */
         .active-class-box {
             background-color: #e6f4ea;
             border: 2px solid #34a853;
-            padding: 15px;
-            border-radius: 8px;
+            padding: 18px;
+            border-radius: 12px;
             margin-bottom: 25px;
+            animation: pulse 2s infinite; /* 登録期間中は少しアニメーションさせる */
         }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(52, 168, 83, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(52, 168, 83, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(52, 168, 83, 0); }
+        }
+
         .class-btn {
             background-color: #34a853;
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 14px 20px;
             font-size: 1.1rem;
             font-weight: bold;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             width: 100%;
             box-sizing: border-box;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transition: background-color 0.3s;
+            box-shadow: 0 4px 6px rgba(52, 168, 83, 0.2);
+            transition: all 0.2s;
         }
         .class-btn:hover {
             background-color: #2b8a44;
+            transform: translateY(-1px);
         }
-        .no-class-text {
-            color: #777;
-            font-size: 0.95rem;
-            font-style: italic;
+
+        /* 🌸 【新機能】授業がないときの可愛いボックス */
+        .no-class-box {
+            background-color: #fff5f5; /* 優しいピンク背景 */
+            border: 2px dashed #feb2b2; /* 点線 */
+            padding: 20px;
+            border-radius: 12px;
             margin-bottom: 25px;
         }
+        .no-class-text {
+            color: #e53e3e;
+            font-size: 1rem;
+            font-weight: bold;
+            margin: 0 0 8px 0;
+        }
+        .no-class-subtext {
+            color: #718096;
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
         hr {
             border: 0;
-            border-top: 1px solid #ddd;
-            margin: 20px 0;
+            border-top: 1px dashed #cbd5e0;
+            margin: 25px 0;
         }
         .manual-section {
-            color: #666;
+            color: #4a5568;
         }
         input[type="text"] {
             width: 80%;
-            padding: 10px;
+            padding: 12px;
             font-size: 1rem;
-            border: 2px solid #ddd;
-            border-radius: 5px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
             margin-bottom: 15px;
             outline: none;
+            text-align: center;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus {
+            border-color: #3182ce;
         }
         .manual-btn {
-            background-color: #007bff;
+            background-color: #3182ce;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 20px;
             font-size: 1rem;
-            border-radius: 5px;
+            font-weight: bold;
+            border-radius: 8px;
             cursor: pointer;
             width: 85%;
+            box-shadow: 0 4px 6px rgba(49, 130, 206, 0.2);
         }
     </style>
 </head>
@@ -161,24 +191,16 @@
     const baseUrl = "https://attendance.is.it-chiba.ac.jp/attendance/class_room/";
     const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
 
-    // 画面が開いたときに自動実行
     window.onload = function() {
-        startClock();        // 時計をスタート
-        checkCurrentClass(); // 授業判定（最初の一回）
-        
-        // 1分ごとに授業判定を再実行してボタンを更新する
-        setInterval(checkCurrentClass, 60000); 
+        startClock();
+        checkCurrentClass();
+        setInterval(checkCurrentClass, 60000); // 1分ごとにチェック
     };
 
-    // 🕰️ 時計をリアルタイムに更新する関数
     function startClock() {
         function updateClock() {
             const now = new Date();
-            
-            // 年、月、日、曜日を組み立て
             const dateStr = `${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()} (${weekdays[now.getDay()]})`;
-            
-            // 時、分、秒を2桁になるように組み立て
             const timeStr = [now.getHours(), now.getMinutes(), now.getSeconds()]
                 .map(unit => String(unit).padStart(2, '0'))
                 .join(':');
@@ -186,13 +208,10 @@
             document.getElementById('clock-date').innerText = dateStr;
             document.getElementById('clock-time').innerText = timeStr;
         }
-
-        // 1秒ごとにupdateClockを呼び出す
-        updateClock(); // 最初の表示
+        updateClock();
         setInterval(updateClock, 1000);
     }
 
-    // 授業判定の関数（前回のままですが、自動更新するようにonloadを変更）
     function checkCurrentClass() {
         const now = new Date();
         const currentDay = now.getDay();
@@ -205,20 +224,21 @@
         myTimetable.forEach(course => {
             if (course.day === currentDay) {
                 const [startH, startM] = course.start.split(':').map(Number);
-                const [endH, endM] = course.end.split(':').map(Number);
-                
                 const startMinutes = startH * 60 + startM;
-                const endMinutes = endH * 60 + endM;
+                
+                // 🌟 新ルール：授業開始の「30分前」から「60分後（1時間後）」まで表示
+                const displayStart = startMinutes - 30;
+                const displayEnd = startMinutes + 60;
 
-                if (currentMinutes >= (startMinutes - 30) && currentMinutes <= endMinutes) {
+                if (currentMinutes >= displayStart && currentMinutes <= displayEnd) {
                     foundClass = true;
                     
                     const box = document.createElement('div');
                     box.className = 'active-class-box';
                     box.innerHTML = `
-                        <p><strong>${course.name}</strong><br>📍 講義室: ${course.room}</p>
+                        <p style="margin:0 0 10px 0; color:#276749;">✨ <strong>${course.name}</strong> ✨<br>📍 講義室: ${course.room}</p>
                         <button class="class-btn" onclick="location.href='${baseUrl + course.room}'">
-                            出席登録画面を開く
+                            出席登録画面をひらく
                         </button>
                     `;
                     area.appendChild(box);
@@ -226,8 +246,15 @@
             }
         });
 
+        // 🌸 授業がないときの癒やし系メッセージ
         if (!foundClass) {
-            area.innerHTML = `<p class="no-class-text">現在、出席受付時間内の授業はありません。</p>`;
+            const cuteBox = document.createElement('div');
+            cuteBox.className = 'no-class-box';
+            cuteBox.innerHTML = `
+                <p class="no-class-text">⸜(* ॑꒳ ॑* )⸝ 今はお休み時間だよ</p>
+                <p class="no-class-subtext">受付中の授業はありません。<br>次の授業までゆっくりしてね ☕️</p>
+            `;
+            area.appendChild(cuteBox);
         }
     }
 
